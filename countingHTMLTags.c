@@ -41,8 +41,8 @@ void print(NODE*list){ //prints all the tags and how many times they appear in .
   print(list->next);
 }
 
-NODE* inside(NODE*list, char*a){ //function that determines if the tag is already in the list or not.
-  NODE* none = make_new("-1");   // If it is, we verify that by returning it's address in memory.
+NODE* inside(NODE*list, char*a){ //function that determines whether the tag is already in the list or not.
+  NODE* none = make_new("-1");   // If it is, we verify that by returning it's address.
   while(list != NULL){           // Otherwise we return NODE with tag = "-1".
     if(strcmp(list->tag, a) == 0)
       return list;
