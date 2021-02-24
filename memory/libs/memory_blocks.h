@@ -9,10 +9,6 @@ typedef struct{
     bool active;
 }block;
 
-void sort_memory_blocks(block blocks[]){
-    
-
-
-}
+void sort_memory_blocks(block blocks[]);
 
 #endif
