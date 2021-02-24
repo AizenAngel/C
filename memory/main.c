@@ -6,18 +6,18 @@
 #include "constatnts.h"
 #include "memory_blocks.h"
 
+/*
+?TODO: Choose/Create more appropriate data structure for saving memory blocks, for tasks:
+?       1) allocating new memory block
+?       2) "freeing" unused  memory block
+?       3) 
+*/
 
 void print_memory(const char* memory){
     int num_blocks = strlen(memory) / BLOCK_LEN;
 
     for(int i = 0; i < num_blocks; i++)
         printf("%.*s\n", BLOCK_LEN, memory + i * BLOCK_LEN);
-}
-
-void print_memory_blocks(block* blocks, int NUM_MEM_BLOCKS){
-    for(int i = 0; i < NUM_MEM_BLOCKS; i++){
-        printf("(start index: %d, size: %d, active: %s)\n", blocks[i].start_index, blocks[i].block_size, blocks[i].active?"active":"inactive");
-    }
 }
 
 void error(int code){
@@ -48,8 +48,8 @@ void initialize_memory_block(char** memory, block** mem_blocks, int* NUM_MEM_BLO
         error(MEMORY_ERROR);
 }
 
-bool allocate_memory_block(char* memory, int block_size){
-
+bool allocate_memory_block(char* memory, block* mem_blocks, int block_size){
+    bool flag;
 }
 
 int main(int argc, char** argv){
@@ -76,7 +76,7 @@ int main(int argc, char** argv){
                 print_memory(memory);
                 break;
             case 1:
-                print_memory_blocks(mem_blocks, NUM_MEM_BLOCKS);
+                print_memory_blocks(mem_blocks);
                 break;
         }        
 
