@@ -21,5 +21,11 @@ int main(){
 
     print_memory_blocks(head);
 
+    // print_memory_blocks(head);
+    // int size = get_free_memory_blocks_size_and_release_them(&(head->next));
+    // head->next = NULL;
+    // printf("%d\n", size);
+    // print_memory_blocks(head);
+
     return 0;
 }

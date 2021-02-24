@@ -41,6 +41,55 @@ void print_memory_blocks(block* head){
     print_memory_blocks(head->next);
 }
 
+int __combine_free_memory_blocks_size_and_release_them(block** head){
+    if(*head == NULL){
+        return 0;
+    }
+
+    int res = __combine_free_memory_blocks_size_and_release_them(&((*head)->next));
+
+    res += (*head)->block_size;
+    (*head)->next = NULL;
+    free(*head);
+    return res;
+}
+
+void combine_free_memory_blocks_size_and_release_them(block** head){
+    int combined_size = __combine_free_memory_blocks_size_and_release_them(&((*head)->next));
+    (*head)->next = NULL;
+    (*head)->block_size+= combined_size;
+}
+
+void arrange_memory_blocks(block** head){
+    block* temp1 = *head;
+    int first_free_block_index = temp1->start_index;
+    temp1->start_index = 0;
+    int new_start_index = temp1->block_size;
+
+    temp1 = temp1->next;
+
+    block* first_unused_memory_block = NULL;
+    bool block_found = false;
+
+
+    while(temp1->next != NULL){
+        
+        if(!block_found && !temp1->used){
+            first_unused_memory_block = temp1;
+            block_found = true;
+        }
+        
+        temp1->start_index = new_start_index;
+        new_start_index += temp1->block_size;
+        temp1 = temp1->next;
+    }
+
+    temp1->start_index -= first_free_block_index;
+    temp1->block_size += first_free_block_index;
+
+    combine_free_memory_blocks_size_and_release_them(&first_unused_memory_block);
+}
+
 void sort_memory_blocks(block** head){
 
     for(block* temp1 = *head; temp1 != NULL; temp1 = temp1->next){
@@ -51,22 +100,7 @@ void sort_memory_blocks(block** head){
         }
     }    
 
-    block* temp1 = *head;
-    int first_free_block_index = temp1->start_index;
-    temp1->start_index = 0;
-    int new_start_index = temp1->block_size;
-
-    temp1 = temp1->next;
-
-    while(temp1->next != NULL){
-        printf("Novi start index: %d\n", new_start_index);
-        temp1->start_index = new_start_index;
-        new_start_index += temp1->block_size;
-        temp1 = temp1->next;
-    }
-
-    temp1->start_index -= first_free_block_index;
-    temp1->block_size += first_free_block_index;
+    arrange_memory_blocks(head);
 }
 
 #endif

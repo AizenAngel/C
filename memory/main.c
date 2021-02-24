@@ -10,7 +10,7 @@
 ?TODO: Choose/Create more appropriate data structure for saving memory blocks, for tasks:
 ?       1) allocating new memory block
 ?       2) "freeing" unused  memory block
-?       3) 
+?       3) connect free memory blocks after fragmentation
 */
 
 void print_memory(const char* memory){
@@ -40,7 +40,7 @@ void initialize_memory_block(char** memory, block** mem_blocks, int* NUM_MEM_BLO
 
     mem_blocks[0]->start_index = 0;
     mem_blocks[0]->block_size = num_blocks * BLOCK_LEN;
-    mem_blocks[0]->active = false;
+    mem_blocks[0]->used = false;
 
     *NUM_MEM_BLOCKS = 1;
 
