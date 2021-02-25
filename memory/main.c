@@ -116,7 +116,7 @@ int main(int argc, char** argv){
                 break;
             case 2:{
                 int block_size;
-                printf("\tEnter block's size: ");
+                printf("\tEnter block's size:\n\t");
                 scanf("%d", &block_size);
                 allocate_memory_block(&memory, &mem_blocks, block_size);
             }
