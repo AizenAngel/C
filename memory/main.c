@@ -13,6 +13,8 @@
 ?       3) connect free memory blocks after fragmentation
 */
 
+#define UNUSED(x) (void)(x)
+
 void print_memory(const char* memory){
     int num_blocks = strlen(memory) / BLOCK_LEN;
 
@@ -48,11 +50,44 @@ void initialize_memory_block(char** memory, block** mem_blocks, int* NUM_MEM_BLO
         error(MEMORY_ERROR);
 }
 
-bool allocate_memory_block(char* memory, block* mem_blocks, int block_size){
-    bool flag;
+bool allocate_memory_block(char** memory, block** mem_blocks, int block_size){
+
+    if(!(*mem_blocks)->used && (*mem_blocks)->block_size >= block_size){
+ 
+        int unused_size_block = (*mem_blocks)->block_size - block_size;
+
+        if(unused_size_block == 0){
+            (*mem_blocks)->used = true;
+            
+            return true;
+        }
+
+        int unused_block_start_index = (*mem_blocks)->start_index + block_size;
+        int unused_block_size = (*mem_blocks)->block_size - block_size;
+
+        block* new_block = create_new_memory_block(unused_block_start_index, unused_block_size);
+        
+        (*mem_blocks)->used = true;
+        (*mem_blocks)->block_size = block_size;
+
+        block* old_next = (*mem_blocks)->next;
+        (*mem_blocks)->next = new_block;
+        new_block->next = old_next;
+
+        return true;
+    }
+
+    if(!allocate_memory_block(memory, &((*mem_blocks)->next), block_size))
+            return false;
+        
+    return true;
+    
 }
 
 int main(int argc, char** argv){
+
+    UNUSED(argc);
+    UNUSED(argv);
 
     int NUM_BLOCKS;
     int action_code;
@@ -66,6 +101,7 @@ int main(int argc, char** argv){
     
     initialize_memory_block(&memory, &mem_blocks, &NUM_MEM_BLOCKS, NUM_BLOCKS);
 
+
     while(true){  
         
         printf("Action: ");
@@ -78,6 +114,12 @@ int main(int argc, char** argv){
             case 1:
                 print_memory_blocks(mem_blocks);
                 break;
+            case 2:{
+                int block_size;
+                printf("\tEnter block's size: ");
+                scanf("%d", &block_size);
+                allocate_memory_block(&memory, &mem_blocks, block_size);
+            }
         }        
 
     }

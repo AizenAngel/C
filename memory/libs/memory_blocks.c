@@ -27,7 +27,7 @@ void print_memory_blocks(block* head){
         return;
     }
 
-    printf("%d %d %s\n", head->start_index, head->block_size, head->used?"used":"unused");
+    printf("\t%d %d %s\n", head->start_index, head->block_size, head->used?"used":"unused");
     print_memory_blocks(head->next);
 }
 
@@ -91,4 +91,14 @@ void sort_memory_blocks(block** head){
     }    
 
     arrange_memory_blocks(head);
+}
+
+block* create_new_memory_block(int start_index, int block_size){
+    block* new_block = malloc(sizeof(block*));
+    new_block->block_size = block_size;
+    new_block->next = NULL;
+    new_block->start_index = start_index;
+    new_block->used = false;
+
+    return new_block;
 }

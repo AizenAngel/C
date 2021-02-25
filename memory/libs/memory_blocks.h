@@ -3,16 +3,18 @@
 
 #include <stdbool.h>
 
-typedef struct{
+typedef struct block{
     int start_index;
     int block_size;
     bool used;
     struct block* next;
-}block;
+} block;
 
 #define swap_values(x, y, T) do { T tmp = x; x = y; y = tmp; } while (0)
 
+
 void swap_blocks(block* block1, block* block2);
+block* create_new_memory_block(int start_index, int block_size);
 void add_new_block(block** head, int start_index, int block_size, bool used);
 void print_memory_blocks(block* head);
 int __combine_free_memory_blocks_size_and_release_them(block** head);
