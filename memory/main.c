@@ -51,6 +51,8 @@ void initialize_memory_block(char** memory, block** mem_blocks, int* NUM_MEM_BLO
 }
 
 bool allocate_memory_block(char** memory, block** mem_blocks, int block_size){
+    if(*mem_blocks == NULL)
+        return false;
 
     if(!(*mem_blocks)->used && (*mem_blocks)->block_size >= block_size){
  
@@ -77,11 +79,10 @@ bool allocate_memory_block(char** memory, block** mem_blocks, int block_size){
         return true;
     }
 
-    if(!allocate_memory_block(memory, &((*mem_blocks)->next), block_size))
-            return false;
+    if(allocate_memory_block(memory, &((*mem_blocks)->next), block_size))
+            return true;
         
-    return true;
-    
+    return false;
 }
 
 int main(int argc, char** argv){
