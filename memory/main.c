@@ -23,7 +23,7 @@ void print_memory(const char* memory){
     int num_blocks = strlen(memory) / BLOCK_LEN;
 
     for(int i = 0; i < num_blocks; i++)
-        printf("%.*s\n", BLOCK_LEN, memory + i * BLOCK_LEN);
+        printf("\t%.*s\n", BLOCK_LEN, memory + i * BLOCK_LEN);
 }
 
 void error(int code){
