@@ -11,7 +11,11 @@
 ?       1) allocating new memory block
 ?       2) "freeing" unused  memory block
 ?       3) connect free memory blocks after fragmentation
+?       4) if more than 10 memory blocks are taken, find a way to allocate more memory
 */
+
+bool used_array[10] = {false, false, false, false, false, 
+                       false, false, false, false, false};
 
 #define UNUSED(x) (void)(x)
 
@@ -27,6 +31,28 @@ void error(int code){
         case MEMORY_ERROR: fprintf(stderr, "Memory error!");
                             exit(1);
     }
+}
+
+void set_memory(char** memory, int index, int len){
+    int set_index = -1;
+
+    for(int i = 0; i < 10; i++){
+        if(!used_array[i]){
+            set_index = i;
+            break;
+        }
+    }
+
+    if(set_index == -1){
+        return;
+    }
+        
+
+    used_array[set_index] = true;
+
+    memset(*(memory) + index, set_index + '0', len);
+
+    return;
 }
 
 /*
@@ -76,11 +102,13 @@ bool allocate_memory_block(char** memory, block** mem_blocks, int block_size){
         (*mem_blocks)->next = new_block;
         new_block->next = old_next;
 
+        set_memory(memory, (*mem_blocks)->start_index, (*mem_blocks)->block_size);
+
         return true;
     }
 
     if(allocate_memory_block(memory, &((*mem_blocks)->next), block_size))
-            return true;
+        return true;
         
     return false;
 }
