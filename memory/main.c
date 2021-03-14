@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include "error_codes.h"
 #include "constatnts.h"
 #include "memory_blocks.h"
@@ -55,6 +56,11 @@ void set_memory(char** memory, int index, int len){
     return;
 }
 
+void free_memory(char** memory, int index, int len, int set_index){
+    memset(*(memory) + index, '0', len);
+    used_array[set_index] = false;
+}
+
 /*
 Initialize memory block and set it's inital value to indicate that it's empty.
 */
@@ -103,6 +109,8 @@ bool allocate_memory_block(char** memory, block** mem_blocks, int block_size){
         new_block->next = old_next;
 
         set_memory(memory, (*mem_blocks)->start_index, (*mem_blocks)->block_size);
+
+        
 
         return true;
     }
