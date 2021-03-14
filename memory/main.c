@@ -8,11 +8,13 @@
 #include "memory_blocks.h"
 
 /*
-?TODO: Choose/Create more appropriate data structure for saving memory blocks, for tasks:
-?       1) allocating new memory block
-?       2) "freeing" unused  memory block
-?       3) connect free memory blocks after fragmentation
-?       4) if more than 10 memory blocks are taken, find a way to allocate more memory
+?TODOS:    
+//?       0) Choose/Create more appropriate data structure for saving memory blocks, for tasks:
+//?       1) allocating new memory block
+//?       2) "freeing" unused  memory block
+//?       3) connect free memory blocks after fragmentation
+//?       4) if more than 10 memory blocks are taken, find a way to allocate more memory
+?         5) Add threads to allocate and free memory
 */
 
 bool used_array[10] = {false, false, false, false, false, 
