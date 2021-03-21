@@ -1,6 +1,5 @@
 CXX = gcc
-FLAGS = -std=c11 -I ./libs -Wall -Wextra -g
-
+FLAGS = -std=c11 -I ./libs
 main.out: main.c memory_blocks.out
 	$(CXX) $(FLAGS) $^ -o $@ 
 
