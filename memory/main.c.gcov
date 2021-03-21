@@ -1,0 +1,166 @@
+        -:    0:Source:main.c
+        -:    0:Graph:main.gcno
+        -:    0:Data:main.gcda
+        -:    0:Runs:1
+        -:    1:#include <stdio.h>
+        -:    2:#include <stdbool.h>
+        -:    3:#include <string.h>
+        -:    4:#include <stdlib.h>
+        -:    5:#include <stdlib.h>
+        -:    6:
+        -:    7:#include "error_codes.h"
+        -:    8:#include "constatnts.h"
+        -:    9:#include "memory_blocks.h"
+        -:   10:
+        -:   11:
+        -:   12:/*
+        -:   13:?TODO: Choose/Create more appropriate data structure for saving memory blocks, for tasks:
+        -:   14:?       1) allocating new memory block
+        -:   15:?       2) "freeing" unused  memory block
+        -:   16:?       3) connect free memory blocks after fragmentation
+        -:   17:?       4) if more than 10 memory blocks are taken, find a way to allocate more memory
+        -:   18:*/
+        -:   19:
+        -:   20:bool used_array[10] = {false, false, false, false, false, false, false, false, false, false};
+        -:   22:
+        -:   23:#define UNUSED(x) (void)(x)
+        -:   24:
+        1:   25:void print_memory(const char* memory){
+        1:   26:    int num_blocks = strlen(memory) / BLOCK_LEN;
+        -:   27:
+        3:   28:    for(int i = 0; i < num_blocks; i++)
+        2:   29:        printf("\t%.*s\n", BLOCK_LEN, memory + i * BLOCK_LEN);
+        1:   30:}
+        -:   31:
+    #####:   32:void error(int code){
+    #####:   33:    switch(code){
+    #####:   34:        case MEMORY_ERROR: fprintf(stderr, "Memory error!");
+    #####:   35:                            exit(1);
+        -:   36:    }
+    #####:   37:}
+        -:   38:
+    #####:   39:void set_memory(char** memory, int index, int len){
+    #####:   40:    int set_index = -1;
+        -:   41:
+    #####:   42:    for(int i = 0; i < 10; i++){
+    #####:   43:        if(!used_array[i]){
+    #####:   44:            set_index = i;
+    #####:   45:            break;
+        -:   46:        }
+        -:   47:    }
+        -:   48:
+    #####:   49:    if(set_index == -1){
+    #####:   50:        return;
+        -:   51:    }
+        -:   52:        
+        -:   53:
+    #####:   54:    used_array[set_index] = true;
+        -:   55:
+    #####:   56:    memset(*(memory) + index, set_index + '0', len);
+        -:   57:
+    #####:   58:    return;
+        -:   59:}
+        -:   60:
+        -:   61:/*
+        -:   62:Initialize memory block and set it's inital value to indicate that it's empty.
+        -:   63:*/
+        -:   64:
+        1:   65:void initialize_memory_block(char** memory, block** mem_blocks, int* NUM_MEM_BLOCKS, int num_blocks){
+        -:   66:    
+        1:   67:    *memory = (char*) malloc(num_blocks * BLOCK_LEN * sizeof(char));
+        1:   68:    *mem_blocks = (block*) malloc(BLOCK_LEN * sizeof(block));
+        -:   69:
+        1:   70:    memset(*memory, '*', num_blocks * BLOCK_LEN);
+        -:   71:
+        1:   72:    mem_blocks[0]->start_index = 0;
+        1:   73:    mem_blocks[0]->block_size = num_blocks * BLOCK_LEN;
+        1:   74:    mem_blocks[0]->used = false;
+        -:   75:
+        1:   76:    *NUM_MEM_BLOCKS = 1;
+        -:   77:
+        1:   78:    if(!memory)
+    #####:   79:        error(MEMORY_ERROR);
+        1:   80:}
+        -:   81:
+    #####:   82:bool allocate_memory_block(char** memory, block** mem_blocks, int block_size){
+    #####:   83:    if(*mem_blocks == NULL)
+    #####:   84:        return false;
+        -:   85:
+    #####:   86:    if(!(*mem_blocks)->used && (*mem_blocks)->block_size >= block_size){
+        -:   87: 
+    #####:   88:        int unused_size_block = (*mem_blocks)->block_size - block_size;
+        -:   89:
+    #####:   90:        if(unused_size_block == 0){
+    #####:   91:            (*mem_blocks)->used = true;
+        -:   92:            
+    #####:   93:            return true;
+        -:   94:        }
+        -:   95:
+    #####:   96:        int unused_block_start_index = (*mem_blocks)->start_index + block_size;
+    #####:   97:        int unused_block_size = (*mem_blocks)->block_size - block_size;
+        -:   98:
+    #####:   99:        block* new_block = create_new_memory_block(unused_block_start_index, unused_block_size);
+        -:  100:        
+    #####:  101:        (*mem_blocks)->used = true;
+    #####:  102:        (*mem_blocks)->block_size = block_size;
+        -:  103:
+    #####:  104:        block* old_next = (*mem_blocks)->next;
+    #####:  105:        (*mem_blocks)->next = new_block;
+    #####:  106:        new_block->next = old_next;
+        -:  107:
+    #####:  108:        set_memory(memory, (*mem_blocks)->start_index, (*mem_blocks)->block_size);
+        -:  109:
+    #####:  110:        return true;
+        -:  111:    }
+        -:  112:
+    #####:  113:    if(allocate_memory_block(memory, &((*mem_blocks)->next), block_size))
+    #####:  114:        return true;
+        -:  115:        
+    #####:  116:    return false;
+        -:  117:}
+        -:  118:
+        1:  119:int main(int argc, char** argv){
+        -:  120:
+        -:  121:    UNUSED(argc);
+        -:  122:    UNUSED(argv);
+        -:  123:
+        -:  124:    int NUM_BLOCKS;
+        -:  125:    int action_code;
+        -:  126:    char* memory;
+        -:  127:
+        -:  128:    block* mem_blocks;
+        -:  129:    int NUM_MEM_BLOCKS;
+        -:  130:
+        1:  131:    printf("Enter number of blocks: ");
+        1:  132:    scanf("%d", &NUM_BLOCKS);
+        -:  133:    
+        1:  134:    initialize_memory_block(&memory, &mem_blocks, &NUM_MEM_BLOCKS, NUM_BLOCKS);
+        -:  135:
+        -:  136:
+        -:  137:    while(true){  
+        -:  138:        
+        3:  139:        printf("Action: ");
+        3:  140:        scanf("%d", &action_code);
+        -:  141:
+        3:  142:        switch(action_code){
+        1:  143:            case 0: 
+        1:  144:                print_memory(memory);
+        1:  145:                break;
+        1:  146:            case 1:
+        1:  147:                print_memory_blocks(mem_blocks);
+        1:  148:                break;
+    #####:  149:            case 2:{
+        -:  150:                int block_size;
+    #####:  151:                printf("\tEnter block's size:\n\t");
+    #####:  152:                scanf("%d", &block_size);
+    #####:  153:                allocate_memory_block(&memory, &mem_blocks, block_size);
+        -:  154:            }
+        1:  155:            case 3:{
+        1:  156:                exit(0);
+        -:  157:            }
+        -:  158:        }        
+        -:  159:
+        2:  160:    }
+        -:  161:
+        -:  162:    return 0;
+        -:  163:}
