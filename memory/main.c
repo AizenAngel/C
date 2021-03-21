@@ -2,9 +2,12 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdlib.h>
+
 #include "error_codes.h"
 #include "constatnts.h"
 #include "memory_blocks.h"
+
 
 /*
 ?TODO: Choose/Create more appropriate data structure for saving memory blocks, for tasks:
@@ -148,6 +151,9 @@ int main(int argc, char** argv){
                 printf("\tEnter block's size:\n\t");
                 scanf("%d", &block_size);
                 allocate_memory_block(&memory, &mem_blocks, block_size);
+            }
+            case 3:{
+                exit(0);
             }
         }        
 
